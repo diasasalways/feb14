@@ -167,7 +167,6 @@
         let isFlying = false;
         let detectionRadius = 200; // Distance from which button starts fleeing
 
-        // Initialize button position next to Yes button
         function initButtonPosition() {
             const yesRect = btnYes.getBoundingClientRect();
             buttonX = yesRect.right + 20;
@@ -175,13 +174,11 @@
             updateButtonPosition();
         }
 
-        // Update button visual position
         function updateButtonPosition() {
             btnNo.style.left = buttonX + 'px';
             btnNo.style.top = buttonY + 'px';
         }
 
-        // Get a random safe position on the page
         function getRandomPosition() {
             const padding = 50;
             const maxX = window.innerWidth - btnNo.offsetWidth - padding;
@@ -193,7 +190,6 @@
             };
         }
 
-        // Smooth animation to new position
         function flyToPosition(targetX, targetY, duration = 300) {
             const startX = buttonX;
             const startY = buttonY;
@@ -206,7 +202,6 @@
                 const elapsed = Date.now() - startTime;
                 const progress = Math.min(elapsed / duration, 1);
                 
-                // Easing function for smooth movement
                 const easeProgress = 1 - Math.pow(1 - progress, 3);
                 
                 buttonX = startX + (targetX - startX) * easeProgress;
@@ -224,38 +219,30 @@
             animate();
         }
 
-        // Progressive detection - gets more sensitive over time
         let attemptCount = 0;
         
         function moveButton(e) {
-            // Don't move if already flying
             if (isFlying) return;
             
             const mouseX = e.clientX;
             const mouseY = e.clientY;
             
-            // Get button center coordinates
             const btnCenterX = buttonX + btnNo.offsetWidth / 2;
             const btnCenterY = buttonY + btnNo.offsetHeight / 2;
             
-            // Calculate distance from mouse to button center
             const distanceX = mouseX - btnCenterX;
             const distanceY = mouseY - btnCenterY;
             const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
             
-            // Progressive difficulty - button gets more sensitive with each attempt
-            // But cap at 350px to prevent it from being too sensitive
-            const currentRadius = Math.min(350, detectionRadius + (attemptCount * 20));
+            // cap the radius
+            const currentRadius = Math.min(200, detectionRadius + (attemptCount * 20));
             
-            // ONLY move if mouse is within detection radius
             if (distance < currentRadius) {
                 attemptCount++;
                 
-                // Get a random position far from the mouse
                 let newPos = getRandomPosition();
                 let bestDistance = 0;
                 
-                // Try multiple positions and pick the one farthest from mouse
                 for (let i = 0; i < 5; i++) {
                     const testPos = getRandomPosition();
                     const testDist = Math.sqrt(
@@ -269,30 +256,25 @@
                     }
                 }
                 
-                // Faster movement as attempts increase
                 const animationSpeed = Math.max(150, 300 - attemptCount * 10);
                 flyToPosition(newPos.x, newPos.y, animationSpeed);
             }
         }
 
-        // Track mouse movement
         document.addEventListener('mousemove', moveButton);
 
-        // Prevent clicking the "No" button
         btnNo.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             return false;
         });
         
-        // Also prevent mousedown/mouseup
         btnNo.addEventListener('mousedown', (e) => {
             e.preventDefault();
             e.stopPropagation();
             return false;
         });
 
-        // Handle "Yes" button click
         btnYes.addEventListener('click', () => {
             document.removeEventListener('mousemove', moveButton);
             btnNo.style.display = 'none';
@@ -300,7 +282,6 @@
             successContainer.classList.add('show');
         });
 
-        // Initialize button position after page loads
         setTimeout(initButtonPosition, 100);
     </script>
 </body>
