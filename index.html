@@ -228,14 +228,17 @@
         let attemptCount = 0;
         
         function moveButton(e) {
+            // Don't move if already flying
             if (isFlying) return;
             
             const mouseX = e.clientX;
             const mouseY = e.clientY;
             
+            // Get button center coordinates
             const btnCenterX = buttonX + btnNo.offsetWidth / 2;
             const btnCenterY = buttonY + btnNo.offsetHeight / 2;
             
+            // Calculate distance from mouse to button center
             const distanceX = mouseX - btnCenterX;
             const distanceY = mouseY - btnCenterY;
             const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
@@ -243,28 +246,24 @@
             // Progressive difficulty - button gets more sensitive with each attempt
             const currentRadius = detectionRadius + (attemptCount * 30);
             
+            // ONLY move if mouse is within detection radius
             if (distance < currentRadius) {
                 attemptCount++;
                 
-                // Calculate direction away from mouse
-                const angle = Math.atan2(distanceY, distanceX);
-                
-                // Get a random position, preferably far from the mouse
+                // Get a random position far from the mouse
                 let newPos = getRandomPosition();
+                let bestDistance = 0;
                 
-                // Try to get a position that's far from the mouse
+                // Try multiple positions and pick the one farthest from mouse
                 for (let i = 0; i < 5; i++) {
                     const testPos = getRandomPosition();
                     const testDist = Math.sqrt(
                         Math.pow(testPos.x - mouseX, 2) + 
                         Math.pow(testPos.y - mouseY, 2)
                     );
-                    const currentDist = Math.sqrt(
-                        Math.pow(newPos.x - mouseX, 2) + 
-                        Math.pow(newPos.y - mouseY, 2)
-                    );
                     
-                    if (testDist > currentDist) {
+                    if (testDist > bestDistance) {
+                        bestDistance = testDist;
                         newPos = testPos;
                     }
                 }
