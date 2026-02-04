@@ -23,8 +23,8 @@
 
         .container {
             background-color: white;
-            width: 35%;
-            min-width: 350px;
+            width: 38.5%;
+            min-width: 380px;
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -50,10 +50,11 @@
         .buttons-container {
             display: flex;
             justify-content: center;
+            align-items: center;
             gap: 20px;
             margin-top: 30px;
             position: relative;
-            height: 60px;
+            height: 80px;
         }
 
         .btn-yes {
@@ -82,7 +83,7 @@
             border-radius: 10px;
             cursor: pointer;
             position: absolute;
-            transition: all 0.3s ease;
+            transition: all 0.1s ease;
         }
 
         .success-container {
@@ -170,11 +171,11 @@
             const distanceY = mouseY - btnCenterY;
             const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
             
-            // If mouse is within 100px of the button, move it away
-            if (distance < 100) {
+            // If mouse is within 150px of the button, move it away
+            if (distance < 150) {
                 // Calculate new position (move away from mouse)
                 const angle = Math.atan2(distanceY, distanceX);
-                const moveDistance = 150;
+                const moveDistance = 250;
                 
                 let newLeft = btnRect.left - containerRect.left - Math.cos(angle) * moveDistance;
                 let newTop = btnRect.top - containerRect.top - Math.sin(angle) * moveDistance;
@@ -206,9 +207,14 @@
             successContainer.classList.add('show');
         });
 
-        // Set initial position for "No" button
-        btnNo.style.left = '150px';
-        btnNo.style.top = '0px';
+        // Set initial position for "No" button (positioned to the right of Yes button)
+        setTimeout(() => {
+            const yesRect = btnYes.getBoundingClientRect();
+            const containerRect = buttonsContainer.getBoundingClientRect();
+            btnNo.style.left = (yesRect.right - containerRect.left + 20) + 'px';
+            btnNo.style.top = '50%';
+            btnNo.style.transform = 'translateY(-50%)';
+        }, 10);
     </script>
 </body>
 </html>
